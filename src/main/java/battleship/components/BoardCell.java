@@ -1,21 +1,42 @@
-package battleship.gui;
-
-import battleship.CellState;
+package battleship.components;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class CellComponent extends JPanel {
+public class BoardCell extends JPanel {
+    public enum State {
+        Empty,
+        Hit,
+        Missed,
+        Sunk,
+        Occupied
+    }
+
+    public enum Orientation {
+        Left,
+        Right,
+        Top,
+        Bottom,
+        Vertical,
+        Horizontal,
+        None
+    }
+
     private final int size = 40;
-    private CellState state = CellState.Empty;
+    private State state = State.Empty;
     private Orientation orientation = Orientation.None;
-    private boolean hit = true;
+    private boolean hit = false;
     private boolean reveal = true;
 
     private final Color waterColor = new Color(58, 115, 255);
     private final Color gridColor = new Color(156, 233, 255);
-    private final Color boatColor = Color.GRAY;
-    public CellComponent() {
+    private Color boatColor = Color.GRAY;
+
+    public void setBoatColor(Color boatColor) {
+        this.boatColor = boatColor;
+    }
+
+    public BoardCell() {
         setPreferredSize(new Dimension(40, 40));
     }
 
@@ -35,7 +56,7 @@ public class CellComponent extends JPanel {
         this.reveal = reveal;
     }
 
-    public CellState getState() {
+    public State getState() {
         return state;
     }
 
@@ -47,8 +68,14 @@ public class CellComponent extends JPanel {
         this.orientation = orientation;
     }
 
-    public void setState(CellState state) {
+    public void setState(State state) {
         this.state = state;
+    }
+
+    public void clear() {
+        state = State.Empty;
+        orientation = Orientation.None;
+        repaint();
     }
 
     @Override
@@ -56,6 +83,8 @@ public class CellComponent extends JPanel {
         setBackground(waterColor);
         g.setColor(waterColor);
         super.paint(g);
+
+        drawEmpty(g);
 
         if (reveal) {
             switch (orientation) {
@@ -101,6 +130,7 @@ public class CellComponent extends JPanel {
         y1 = convertY(y1);
         y2 = convertY(y2);
 
+        g.setColor(gridColor);
         g.drawLine(x1, y1, x2, y1);
         g.drawLine(x2, y1, x2, y2);
         g.drawLine(x2, y2, x1, y2);
@@ -252,4 +282,6 @@ public class CellComponent extends JPanel {
         g.drawLine(0, 0, 40, 40);
         g.drawLine(0, 40, 40, 0);
     }
+
+
 }
